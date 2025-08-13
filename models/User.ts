@@ -1,7 +1,15 @@
 import mongoose from 'mongoose';
+import mongooseSequence from 'mongoose-sequence';
+
+const AutoIncrement = mongooseSequence(mongoose);
 
 const userSchema = new mongoose.Schema(
   {
+    uid: {
+      type: Number,
+      unique: true,
+      required: true
+    },
     email: {
       type: String,
       unique: true,
@@ -22,8 +30,8 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['admin', 'user'],
-      default: 'user'
+      enum: ['admin', 'teacher', 'student'],
+      default: 'student'
     }
   },
   {

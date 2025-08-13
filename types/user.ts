@@ -10,7 +10,7 @@ export const userStatuses = [
   'unverified'
 ] as const;
 
-export const userRoles = ['admin', 'user'] as const;
+export const userRoles = ['admin', 'teacher', 'student'] as const;
 
 export interface UserType extends Base {
   email: string;
