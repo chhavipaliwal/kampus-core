@@ -12,6 +12,12 @@ export const sectionItems: SidebarItem[] = [
         title: 'Home'
       },
       {
+        key: 'students',
+        href: '/dashboard/students',
+        icon: 'solar:user-bold-duotone',
+        title: 'Students'
+      },
+      {
         key: 'users',
         href: '/dashboard/users',
         icon: 'solar:users-group-two-rounded-bold-duotone',

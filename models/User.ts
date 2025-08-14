@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+// @ts-ignore
 import mongooseSequence from 'mongoose-sequence';
 
 const AutoIncrement = mongooseSequence(mongoose);
