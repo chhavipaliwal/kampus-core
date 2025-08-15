@@ -2,50 +2,34 @@ import { NextRequest, NextResponse } from 'next/server';
 import Student from '@/models/Student';
 import { connectDB } from '@/lib/db';
 
-export async function GET() {
+type Params = Promise<{
+  uid: string;
+}>;
+
+export async function GET(req: NextRequest, { params }: { params: Params }) {
+  const uid = (await params).uid;
   try {
     await connectDB();
-    const students = await Student.find();
-
-    return NextResponse.json(students);
-  } catch (error) {
-    console.log(error);
-    return NextResponse.json(
-      { error: 'Failed to fetch students' },
-      { status: 500 }
-    );
-  }
-}
-
-export async function POST(req: NextRequest) {
-  try {
-    const data = await req.json();
-    if (!data || !data.uid || !data.name || !data.email) {
-      return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
-      );
+    const student = await Student.findOne({ uid: Number(uid) });
+    if (!student) {
+      return NextResponse.json({ error: 'Student not found' }, { status: 404 });
     }
-    const students = await Student.create(data);
-    await students.save();
-    return NextResponse.json(students);
+    return NextResponse.json(student);
   } catch (error) {
     console.log(error);
     return NextResponse.json(
-      { error: 'Failed to add students' },
+      { error: 'Failed to fetch student' },
       { status: 500 }
     );
   }
 }
 
-export async function PUT(
-  req: NextRequest,
-  context: { params: { uid: string } }
-) {
+export async function PUT(req: NextRequest, { params }: { params: Params }) {
+  const uid = (await params).uid;
   try {
     await connectDB();
     const student = await Student.findOneAndUpdate({
-      uid: String(context.params.uid)
+      uid: Number(uid)
     });
     if (!student) {
       return NextResponse.json({ error: 'Student not found' }, { status: 404 });
@@ -61,14 +45,12 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  req: NextRequest,
-  context: { params: { uid: string } }
-) {
+export async function DELETE(req: NextRequest, { params }: { params: Params }) {
+  const uid = (await params).uid;
   try {
     await connectDB();
     const student = await Student.findOneAndDelete({
-      uid: String(context.params.uid)
+      uid: Number(uid)
     });
     if (!student) {
       return NextResponse.json({ error: 'Student not found' }, { status: 404 });
@@ -83,15 +65,14 @@ export async function DELETE(
   }
 }
 
-export async function PATCH(
-  req: NextRequest,
-  context: { params: { uid: string } }
-) {
+export async function PATCH(req: NextRequest, { params }: { params: Params }) {
+  const uid = (await params).uid;
+  const data = await req.json();
   try {
     await connectDB();
     const student = await Student.findOneAndUpdate(
-      { uid: String(context.params.uid) },
-      { $set: await req.json() }
+      { uid: Number(uid) },
+      { $set: data }
     );
     if (!student) {
       return NextResponse.json({ error: 'Student not found' }, { status: 404 });

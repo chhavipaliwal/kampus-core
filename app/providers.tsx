@@ -7,6 +7,9 @@ import NextTopLoader from 'nextjs-toploader';
 import { useRouter } from 'nextjs-toploader/app';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { Session } from 'next-auth';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
 
 declare module '@react-types/shared' {
   interface RouterConfig {
@@ -26,22 +29,24 @@ export function Providers({
   const router = useRouter();
 
   return (
-    <HeroUIProvider navigate={router.push}>
-      <ToastProvider
-        toastProps={{
-          shouldShowTimeoutProgress: true
-        }}
-      />
-      <SessionProvider session={session}>
-        <NuqsAdapter>{children}</NuqsAdapter>
-        <NextTopLoader
-          height={4}
-          showSpinner={false}
-          shadow="false"
-          easing="ease"
-          color="hsl(var(--heroui-primary))"
+    <QueryClientProvider client={queryClient}>
+      <HeroUIProvider navigate={router.push}>
+        <ToastProvider
+          toastProps={{
+            shouldShowTimeoutProgress: true
+          }}
         />
-      </SessionProvider>
-    </HeroUIProvider>
+        <SessionProvider session={session}>
+          <NuqsAdapter>{children}</NuqsAdapter>
+          <NextTopLoader
+            height={4}
+            showSpinner={false}
+            shadow="false"
+            easing="ease"
+            color="hsl(var(--heroui-primary))"
+          />
+        </SessionProvider>
+      </HeroUIProvider>
+    </QueryClientProvider>
   );
 }

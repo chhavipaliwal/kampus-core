@@ -1,7 +1,9 @@
+import Students from '@/components/dashboard/students';
+
 export default function StudentPage() {
   return (
     <div>
-      <h1>Student Page</h1>
+      <Students />
     </div>
   );
 }
