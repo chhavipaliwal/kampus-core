@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Student from '@/models/Student';
+import User from '@/models/User';
 import { connectDB } from '@/lib/db';
 import { auth } from '@/auth';
 import { NextAuthRequest } from 'next-auth';
+import { faker } from '@faker-js/faker';
 
 export const GET = auth(async (req: NextAuthRequest) => {
   const user = req.auth?.user;
@@ -33,15 +35,24 @@ export const POST = auth(async (req: NextAuthRequest) => {
 
   try {
     const data = await req.json();
-    if (!data || !data.uid || !data.name || !data.email) {
+    if (!data || !data.name || !data.email) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
       );
     }
-    const students = await Student.create(data);
-    await students.save();
-    return NextResponse.json(students);
+    await connectDB();
+    const student = await Student.create(data);
+    await User.create({
+      uid: student.uid,
+      email: data.email,
+      password: faker.internet.password(),
+      name: data.name,
+      role: 'student'
+    });
+
+    // await students.save();
+    return NextResponse.json(student);
   } catch (error) {
     console.log(error);
     return NextResponse.json(

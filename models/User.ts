@@ -1,8 +1,4 @@
 import mongoose from 'mongoose';
-// @ts-ignore
-import mongooseSequence from 'mongoose-sequence';
-
-const AutoIncrement = mongooseSequence(mongoose);
 
 const userSchema = new mongoose.Schema(
   {
@@ -38,8 +34,6 @@ const userSchema = new mongoose.Schema(
     timestamps: true
   }
 );
-
-userSchema.plugin(AutoIncrement, { inc_field: 'uid' });
 
 const User = mongoose.models.User || mongoose.model('User', userSchema);
 export default User;
