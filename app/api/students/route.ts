@@ -1,8 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Student from '@/models/Student';
 import { connectDB } from '@/lib/db';
+import { auth } from '@/auth';
+import { NextAuthRequest } from 'next-auth';
 
-export async function GET() {
+export const GET = auth(async (req: NextAuthRequest) => {
+  const user = req.auth?.user;
+
+  if (user && !['admin', 'teacher'].includes(user?.role)) {
+    return NextResponse.json({ message: 'Access denied' }, { status: 403 });
+  }
   try {
     await connectDB();
     const students = await Student.find();
@@ -15,9 +22,15 @@ export async function GET() {
       { status: 500 }
     );
   }
-}
+});
 
-export async function POST(req: NextRequest) {
+export const POST = auth(async (req: NextAuthRequest) => {
+  const user = req.auth?.user;
+
+  if (user && !['admin'].includes(user?.role)) {
+    return NextResponse.json({ error: 'Access denied' }, { status: 403 });
+  }
+
   try {
     const data = await req.json();
     if (!data || !data.uid || !data.name || !data.email) {
@@ -36,72 +49,4 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
-}
-
-export async function PUT(
-  req: NextRequest,
-  context: { params: { uid: string } }
-) {
-  try {
-    await connectDB();
-    const student = await Student.findOneAndUpdate({
-      uid: String(context.params.uid)
-    });
-    if (!student) {
-      return NextResponse.json({ error: 'Student not found' }, { status: 404 });
-    }
-    await student.save();
-    return NextResponse.json(student);
-  } catch (error) {
-    console.log(error);
-    return NextResponse.json(
-      { error: 'Failed to update student' },
-      { status: 500 }
-    );
-  }
-}
-
-export async function DELETE(
-  req: NextRequest,
-  context: { params: { uid: string } }
-) {
-  try {
-    await connectDB();
-    const student = await Student.findOneAndDelete({
-      uid: String(context.params.uid)
-    });
-    if (!student) {
-      return NextResponse.json({ error: 'Student not found' }, { status: 404 });
-    }
-    return NextResponse.json({ message: 'Student deleted successfully' });
-  } catch (error) {
-    console.log(error);
-    return NextResponse.json(
-      { error: 'Failed to delete student' },
-      { status: 500 }
-    );
-  }
-}
-
-export async function PATCH(
-  req: NextRequest,
-  context: { params: { uid: string } }
-) {
-  try {
-    await connectDB();
-    const student = await Student.findOneAndUpdate(
-      { uid: String(context.params.uid) },
-      { $set: await req.json() }
-    );
-    if (!student) {
-      return NextResponse.json({ error: 'Student not found' }, { status: 404 });
-    }
-    return NextResponse.json(student);
-  } catch (error) {
-    console.log(error);
-    return NextResponse.json(
-      { error: 'Failed to update student' },
-      { status: 500 }
-    );
-  }
-}
+});

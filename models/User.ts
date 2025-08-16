@@ -8,8 +8,7 @@ const userSchema = new mongoose.Schema(
   {
     uid: {
       type: Number,
-      unique: true,
-      required: true
+      unique: true
     },
     email: {
       type: String,
@@ -39,6 +38,8 @@ const userSchema = new mongoose.Schema(
     timestamps: true
   }
 );
+
+userSchema.plugin(AutoIncrement, { inc_field: 'uid' });
 
 const User = mongoose.models.User || mongoose.model('User', userSchema);
 export default User;
