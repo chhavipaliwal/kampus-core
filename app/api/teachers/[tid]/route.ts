@@ -1,34 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Student from '@/models/Student';
+import Teacher from '@/models/Teacher';
 import { connectDB } from '@/lib/db';
 import { auth } from '@/auth';
 import { NextAuthRequest } from 'next-auth';
 
 type Params = Promise<{
-  uid: string;
+  tid: string;
 }>;
 
 export const GET = auth(
   async (req: NextAuthRequest, { params }: { params: Params }) => {
-    const uid = (await params).uid;
+    const tid = (await params).tid;
     const user = req.auth?.user;
     if (user && !['admin'].includes(user?.role)) {
       return NextResponse.json({ message: 'Access denied' }, { status: 403 });
     }
+
     try {
       await connectDB();
-      const student = await Student.findOne({ uid: Number(uid) });
-      if (!student) {
+      const teacher = await Teacher.findOne({ tid: Number(tid) }).select(
+        user?.role === 'student' ? 'tid name email' : ''
+      );
+      if (!teacher) {
         return NextResponse.json(
-          { error: 'Student not found' },
+          { error: 'Teacher not found' },
           { status: 404 }
         );
       }
-      return NextResponse.json(student);
+      return NextResponse.json(teacher);
     } catch (error) {
       console.log(error);
       return NextResponse.json(
-        { error: 'Failed to fetch student' },
+        { error: 'Failed to fetch Teacher' },
         { status: 500 }
       );
     }
@@ -37,7 +40,7 @@ export const GET = auth(
 
 export const PUT = auth(
   async (req: NextAuthRequest, { params }: { params: Params }) => {
-    const uid = (await params).uid;
+    const tid = (await params).tid;
     const user = req.auth?.user;
 
     if (user && !['admin'].includes(user?.role)) {
@@ -46,21 +49,21 @@ export const PUT = auth(
 
     try {
       await connectDB();
-      const student = await Student.findOneAndUpdate({
-        uid: Number(uid)
+      const teacher = await Teacher.findOneAndUpdate({
+        tid: Number(tid)
       });
-      if (!student) {
+      if (!Teacher) {
         return NextResponse.json(
-          { error: 'Student not found' },
+          { error: 'Teacher not found' },
           { status: 404 }
         );
       }
-      await student.save();
-      return NextResponse.json(student);
+      await teacher.save();
+      return NextResponse.json(Teacher);
     } catch (error) {
       console.log(error);
       return NextResponse.json(
-        { error: 'Failed to update student' },
+        { error: 'Failed to update Teacher' },
         { status: 500 }
       );
     }
@@ -69,7 +72,7 @@ export const PUT = auth(
 
 export const DELETE = auth(
   async (req: NextAuthRequest, { params }: { params: Params }) => {
-    const uid = (await params).uid;
+    const tid = (await params).tid;
     const user = req.auth?.user;
 
     if (user && !['admin'].includes(user?.role)) {
@@ -78,20 +81,20 @@ export const DELETE = auth(
 
     try {
       await connectDB();
-      const student = await Student.findOneAndDelete({
-        uid: Number(uid)
+      const teacher = await Teacher.findOneAndDelete({
+        tid: Number(tid)
       });
-      if (!student) {
+      if (!Teacher) {
         return NextResponse.json(
-          { error: 'Student not found' },
+          { error: 'Teacher not found' },
           { status: 404 }
         );
       }
-      return NextResponse.json({ message: 'Student deleted successfully' });
+      return NextResponse.json({ message: 'Teacher deleted successfully' });
     } catch (error) {
       console.log(error);
       return NextResponse.json(
-        { error: 'Failed to delete student' },
+        { error: 'Failed to delete Teacher' },
         { status: 500 }
       );
     }
@@ -100,7 +103,7 @@ export const DELETE = auth(
 
 export const PATCH = auth(
   async (req: NextAuthRequest, { params }: { params: Params }) => {
-    const uid = (await params).uid;
+    const tid = (await params).tid;
     const user = req.auth?.user;
 
     if (user && !['admin'].includes(user?.role)) {
@@ -110,21 +113,21 @@ export const PATCH = auth(
     const data = await req.json();
     try {
       await connectDB();
-      const student = await Student.findOneAndUpdate(
-        { uid: Number(uid) },
+      const teacher = await Teacher.findOneAndUpdate(
+        { tid: Number(tid) },
         { $set: data }
       );
-      if (!student) {
+      if (!teacher) {
         return NextResponse.json(
-          { error: 'Student not found' },
+          { error: 'Teacher not found' },
           { status: 404 }
         );
       }
-      return NextResponse.json(student);
+      return NextResponse.json(Teacher);
     } catch (error) {
       console.log(error);
       return NextResponse.json(
-        { error: 'Failed to update student' },
+        { error: 'Failed to update Teacher' },
         { status: 500 }
       );
     }

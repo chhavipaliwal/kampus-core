@@ -7,10 +7,9 @@ const AutoIncrement = mongooseSequence(mongoose);
 
 const TeacherSchema = new mongoose.Schema(
   {
-    uid: {
+    tid: {
       type: Number,
-      unique: true,
-      required: true
+      unique: true
     },
     name: {
       type: String,
@@ -67,7 +66,7 @@ const TeacherSchema = new mongoose.Schema(
 );
 
 //@ts-ignore
-TeacherSchema.plugin(AutoIncrement, { inc_field: 'uid', start_seq: 1000 });
+TeacherSchema.plugin(AutoIncrement, { inc_field: 'tid', start_seq: 1000 });
 
 const Teacher =
   mongoose.models.Teacher || mongoose.model('Teacher', TeacherSchema);

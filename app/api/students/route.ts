@@ -1,15 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Student from '@/models/Student';
-import User from '@/models/User';
 import { connectDB } from '@/lib/db';
 import { auth } from '@/auth';
 import { NextAuthRequest } from 'next-auth';
 import { faker } from '@faker-js/faker';
+import User from '@/models/User';
 
 export const GET = auth(async (req: NextAuthRequest) => {
   const user = req.auth?.user;
 
-  if (user && !['admin', 'teacher'].includes(user?.role)) {
+  if (user && !['admin', 'moderator', 'teacher'].includes(user?.role)) {
     return NextResponse.json({ message: 'Access denied' }, { status: 403 });
   }
   try {
@@ -29,7 +29,7 @@ export const GET = auth(async (req: NextAuthRequest) => {
 export const POST = auth(async (req: NextAuthRequest) => {
   const user = req.auth?.user;
 
-  if (user && !['admin'].includes(user?.role)) {
+  if (user && !['admin', 'moderator'].includes(user?.role)) {
     return NextResponse.json({ error: 'Access denied' }, { status: 403 });
   }
 
@@ -44,7 +44,7 @@ export const POST = auth(async (req: NextAuthRequest) => {
     await connectDB();
     const student = await Student.create(data);
     await User.create({
-      uid: student.uid,
+      uid: student.sid,
       email: data.email,
       password: faker.internet.password(),
       name: data.name,

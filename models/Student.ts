@@ -6,7 +6,7 @@ const AutoIncrement = mongooseSequence(mongoose);
 
 const StudentSchema = new mongoose.Schema(
   {
-    uid: {
+    sid: {
       type: Number,
       unique: true
     },
@@ -76,7 +76,7 @@ const StudentSchema = new mongoose.Schema(
 );
 
 // @ts-ignore
-StudentSchema.plugin(AutoIncrement, { inc_field: 'uid', start_seq: 100000 });
+StudentSchema.plugin(AutoIncrement, { inc_field: 'sid', start_seq: 100000 });
 
 const Student =
   mongoose.models.Student || mongoose.model('Student', StudentSchema);
