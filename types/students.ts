@@ -21,6 +21,8 @@ export interface StudentType extends UserType {
   class: string;
   section?: string;
   rollNumber?: string;
+  admissionDate?: Date;
+  terminationDate?: Date;
 }
 export type Gender = ValuesOf<typeof genders>;
 export type studentStatus = ValuesOf<typeof studentStatuses>;

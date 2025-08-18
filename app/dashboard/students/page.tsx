@@ -3,7 +3,7 @@ import {
   HydrationBoundary,
   QueryClient
 } from '@tanstack/react-query';
-import { getAllStudent } from '@/api/students';
+import { getAllStudents } from '@/services/api/students';
 import Students from '@/components/dashboard/students';
 
 export default async function Page() {
@@ -11,7 +11,7 @@ export default async function Page() {
   await queryClient.prefetchQuery({
     queryKey: ['students'],
     queryFn: async () => {
-      const res = await getAllStudent();
+      const res = await getAllStudents();
       if (res.success) {
         return res.data;
       }

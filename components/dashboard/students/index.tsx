@@ -16,56 +16,118 @@ import {
   renderDate
 } from '@/components/ui/data-table/cell-renderers';
 import type { ColumnDef } from '@/components/ui/data-table/types';
-import { useAllNewsletters } from '@/services/newsletter';
-import { NewsletterType } from '@/types/newsletter';
+import { useAllStudents } from '@/services/student';
+import { StudentType } from '@/types/students';
 
 const INITIAL_VISIBLE_COLUMNS = ['email', 'updatedAt', 'createdAt'];
 
 export default function Students() {
   const router = useRouter();
-  const { data, isLoading } = useAllNewsletters();
+  const { data, isLoading } = useAllStudents();
 
-  const newsletters: NewsletterType[] = data || [];
+  const students: StudentType[] = data || [];
 
   // Define columns with render functions
-  const columns: ColumnDef<NewsletterType>[] = useMemo(
+  const columns: ColumnDef<StudentType>[] = useMemo(
     () => [
       {
         name: 'Email',
         uid: 'email',
         sortable: true,
-        renderCell: (newsletter) => (
+        renderCell: (student) => (
           <div className="truncate lowercase text-default-foreground">
-            {newsletter.email}
+            {student.email}
           </div>
         )
       },
-
+      {
+        name: 'Name',
+        uid: 'name',
+        sortable: true,
+        renderCell: (student) => (
+          <div className="truncate text-default-foreground">{student.name}</div>
+        )
+      },
+      {
+        name: 'Phone',
+        uid: 'phone',
+        sortable: true,
+        renderCell: (student) => (
+          <div className="truncate text-default-foreground">
+            {student.phone || 'N/A'}
+          </div>
+        )
+      },
+      {
+        name: 'Class',
+        uid: 'class',
+        sortable: true,
+        renderCell: (student) => (
+          <div className="truncate text-default-foreground">
+            {student.class || 'N/A'}
+          </div>
+        )
+      },
+      {
+        name: 'Roll Number',
+        uid: 'rollNumber',
+        sortable: true,
+        renderCell: (student) => (
+          <div className="truncate text-default-foreground">
+            {student.rollNumber || 'N/A'}
+          </div>
+        )
+      },
+      {
+        name: 'Gender',
+        uid: 'gender',
+        sortable: true,
+        renderCell: (student) => (
+          <div className="truncate text-default-foreground">
+            {student.gender || 'N/A'}
+          </div>
+        )
+      },
+      {
+        name: 'Admission Date',
+        uid: 'admissionDate',
+        sortable: true,
+        renderCell: (student) =>
+          renderDate({ date: student.admissionDate, isTime: true })
+      },
+      {
+        name: 'Termination Date',
+        uid: 'terminationDate',
+        sortable: true,
+        renderCell: (student) =>
+          student.terminationDate
+            ? renderDate({ date: student.terminationDate, isTime: true })
+            : 'N/A'
+      },
       {
         name: 'Created At',
         uid: 'createdAt',
         sortable: true,
-        renderCell: (newsletter) =>
-          renderDate({ date: newsletter.createdAt, isTime: true })
+        renderCell: (student) =>
+          renderDate({ date: student.createdAt, isTime: true })
       },
       {
         name: 'Updated At',
         uid: 'updatedAt',
         sortable: true,
-        renderCell: (newsletter) =>
-          renderDate({ date: newsletter.updatedAt, isTime: true })
+        renderCell: (student) =>
+          renderDate({ date: student.updatedAt, isTime: true })
       },
       {
         name: 'Actions',
         uid: 'actions',
         sortable: false,
-        renderCell: (newsletter) =>
+        renderCell: (student) =>
           renderActions({
-            onView: () => router.push(`/dashboard/users/${newsletter._id}`),
-            onEdit: () =>
-              router.push(`/dashboard/users/${newsletter._id}/edit`),
-            onDelete: () => console.log('Delete', newsletter._id),
-            key: newsletter._id
+            onView: () => router.push(`/dashboard/users/${student._id}`),
+            onEdit: () => router.push(`/dashboard/users/${student._id}/edit`),
+            onDelete: () => console.log('Delete', student._id),
+            key: student._id
           })
       }
     ],
@@ -75,7 +137,7 @@ export default function Students() {
   // Render top bar
   const endContent = () => (
     <Button color="primary" size="sm">
-      New Newsletter
+      New Student
     </Button>
   );
 
@@ -111,15 +173,15 @@ export default function Students() {
 
   return (
     <Table
-      uniqueKey="newsletters"
+      uniqueKey="students"
       isLoading={isLoading}
-      data={newsletters}
+      data={students}
       columns={columns}
       initialVisibleColumns={INITIAL_VISIBLE_COLUMNS}
       keyField="_id"
       // filters={filters}
-      searchField={(newsletter, searchValue) =>
-        newsletter.email.toLowerCase().includes(searchValue.toLowerCase())
+      searchField={(student, searchValue) =>
+        student.email.toLowerCase().includes(searchValue.toLowerCase())
       }
       endContent={endContent}
       renderSelectedActions={renderSelectedActions}
@@ -129,8 +191,8 @@ export default function Students() {
       }}
       onRowAction={(row) => {
         addToast({
-          title: 'Newsletter',
-          description: `Newsletter ${row} clicked`,
+          title: 'New Student',
+          description: `Student ${row} clicked`,
           color: 'success'
         });
       }}
