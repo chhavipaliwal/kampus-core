@@ -16,8 +16,8 @@ import {
   renderDate
 } from '@/components/ui/data-table/cell-renderers';
 import type { ColumnDef } from '@/components/ui/data-table/types';
-import { useAllStudents } from '@/services/student';
-import { StudentType } from '@/types/students';
+import { TeacherType } from '@/types/teachers';
+import { useAllTeachers } from '@/services/teacher';
 
 const INITIAL_VISIBLE_COLUMNS = [
   'email',
@@ -27,22 +27,22 @@ const INITIAL_VISIBLE_COLUMNS = [
   'admissionDate'
 ];
 
-export default function Students() {
+export default function Teachers() {
   const router = useRouter();
-  const { data, isLoading } = useAllStudents();
+  const { data, isLoading } = useAllTeachers();
 
-  const students: StudentType[] = data || [];
+  const teachers: TeacherType[] = data || [];
 
   // Define columns with render functions
-  const columns: ColumnDef<StudentType>[] = useMemo(
+  const columns: ColumnDef<TeacherType>[] = useMemo(
     () => [
       {
         name: 'Email',
         uid: 'email',
         sortable: true,
-        renderCell: (student) => (
+        renderCell: (teacher) => (
           <div className="truncate lowercase text-default-foreground">
-            {student.email}
+            {teacher.email}
           </div>
         )
       },
@@ -50,37 +50,37 @@ export default function Students() {
         name: 'Name',
         uid: 'name',
         sortable: true,
-        renderCell: (student) => (
-          <div className="truncate text-default-foreground">{student.name}</div>
+        renderCell: (teacher) => (
+          <div className="truncate text-default-foreground">{teacher.name}</div>
         )
       },
       {
         name: 'Phone',
         uid: 'phone',
         sortable: true,
-        renderCell: (student) => (
+        renderCell: (teacher) => (
           <div className="truncate text-default-foreground">
-            {student.phone || 'N/A'}
+            {teacher.phone || 'N/A'}
           </div>
         )
       },
       {
-        name: 'Class',
-        uid: 'class',
+        name: 'Subjects',
+        uid: 'subjects',
         sortable: true,
-        renderCell: (student) => (
+        renderCell: (teacher) => (
           <div className="truncate text-default-foreground">
-            {student.class || 'N/A'}
+            {teacher.subjects.join(', ') || 'N/A'}
           </div>
         )
       },
       {
-        name: 'Roll Number',
-        uid: 'rollNumber',
+        name: 'Department',
+        uid: 'department',
         sortable: true,
-        renderCell: (student) => (
+        renderCell: (teacher) => (
           <div className="truncate text-default-foreground">
-            {student.rollNumber || 'N/A'}
+            {teacher.department || 'N/A'}
           </div>
         )
       },
@@ -88,54 +88,45 @@ export default function Students() {
         name: 'Gender',
         uid: 'gender',
         sortable: true,
-        renderCell: (student) => (
+        renderCell: (teacher) => (
           <div className="truncate text-default-foreground">
-            {student.gender || 'N/A'}
+            {teacher.gender || 'N/A'}
           </div>
         )
       },
       {
-        name: 'Admission Date',
-        uid: 'admissionDate',
+        name: 'Hired Date',
+        uid: 'hiredDate',
         sortable: true,
-        renderCell: (student) =>
-          student.admissionDate
-            ? renderDate({ date: student.admissionDate, isTime: true })
-            : 'N/A'
-      },
-      {
-        name: 'Termination Date',
-        uid: 'terminationDate',
-        sortable: true,
-        renderCell: (student) =>
-          student.terminationDate
-            ? renderDate({ date: student.terminationDate, isTime: true })
+        renderCell: (teacher) =>
+          teacher.hiredDate
+            ? renderDate({ date: teacher.hiredDate, isTime: true })
             : 'N/A'
       },
       {
         name: 'Created At',
         uid: 'createdAt',
         sortable: true,
-        renderCell: (student) =>
-          renderDate({ date: student.createdAt, isTime: true })
+        renderCell: (teacher) =>
+          renderDate({ date: teacher.createdAt, isTime: true })
       },
       {
         name: 'Updated At',
         uid: 'updatedAt',
         sortable: true,
-        renderCell: (student) =>
-          renderDate({ date: student.updatedAt, isTime: true })
+        renderCell: (teacher) =>
+          renderDate({ date: teacher.updatedAt, isTime: true })
       },
       {
         name: 'Actions',
         uid: 'actions',
         sortable: false,
-        renderCell: (student) =>
+        renderCell: (teacher) =>
           renderActions({
-            onView: () => router.push(`/dashboard/users/${student._id}`),
-            onEdit: () => router.push(`/dashboard/users/${student._id}/edit`),
-            onDelete: () => console.log('Delete', student._id),
-            key: student._id
+            onView: () => router.push(`/dashboard/users/${teacher._id}`),
+            onEdit: () => router.push(`/dashboard/users/${teacher._id}/edit`),
+            onDelete: () => console.log('Delete', teacher._id),
+            key: teacher._id
           })
       }
     ],
@@ -145,7 +136,7 @@ export default function Students() {
   // Render top bar
   const endContent = () => (
     <Button color="primary" size="sm">
-      New Student
+      New teacher
     </Button>
   );
 
@@ -181,15 +172,15 @@ export default function Students() {
 
   return (
     <Table
-      uniqueKey="students"
+      uniqueKey="teachers"
       isLoading={isLoading}
-      data={students}
+      data={teachers}
       columns={columns}
       initialVisibleColumns={INITIAL_VISIBLE_COLUMNS}
       keyField="_id"
       // filters={filters}
-      searchField={(student, searchValue) =>
-        student.email.toLowerCase().includes(searchValue.toLowerCase())
+      searchField={(teacher, searchValue) =>
+        teacher.email.toLowerCase().includes(searchValue.toLowerCase())
       }
       endContent={endContent}
       renderSelectedActions={renderSelectedActions}
@@ -199,8 +190,8 @@ export default function Students() {
       }}
       onRowAction={(row) => {
         addToast({
-          title: 'New Student',
-          description: `Student ${row} clicked`,
+          title: 'New teacher',
+          description: `teacher ${row} clicked`,
           color: 'success'
         });
       }}
