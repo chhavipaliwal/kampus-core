@@ -65,15 +65,16 @@ export default function Teachers() {
         )
       },
       {
-        name: 'Subjects',
-        uid: 'subjects',
+        name: 'Gender',
+        uid: 'gender',
         sortable: true,
         renderCell: (teacher) => (
           <div className="truncate text-default-foreground">
-            {teacher.subjects.join(', ') || 'N/A'}
+            {teacher.gender || 'N/A'}
           </div>
         )
       },
+
       {
         name: 'Department',
         uid: 'department',
@@ -85,12 +86,12 @@ export default function Teachers() {
         )
       },
       {
-        name: 'Gender',
-        uid: 'gender',
+        name: 'Subjects',
+        uid: 'subjects',
         sortable: true,
         renderCell: (teacher) => (
           <div className="truncate text-default-foreground">
-            {teacher.gender || 'N/A'}
+            {teacher.subjects.join(', ') || 'N/A'}
           </div>
         )
       },
