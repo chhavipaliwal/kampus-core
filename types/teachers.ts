@@ -24,3 +24,14 @@ export interface TeacherType extends UserType {
 }
 export type Gender = ValuesOf<typeof genders>;
 export type TeacherStatus = ValuesOf<typeof teacherStatuses>;
+export type TeacherCreationType = 'existing' | 'new';
+export type CreateTeacherType = {
+  name: string;
+  email: string;
+  age: number;
+  dob?: Date;
+  address: string;
+  subjects: string[];
+  department: string;
+  hiredDate?: Date;
+};

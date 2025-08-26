@@ -1,7 +1,7 @@
-interface Base {
+export interface Base {
   _id: string;
-  addedBy: string;
-  modifiedBy: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdBy: string;
+  updatedBy: string;
+  createdAt: Date | string;
+  updatedAt: Date | string;
 }
