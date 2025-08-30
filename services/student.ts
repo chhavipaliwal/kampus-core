@@ -1,4 +1,4 @@
-'use server';
+'use client';
 
 import { addToast } from '@heroui/react';
 import {
